@@ -32,7 +32,7 @@ This code assumes the user is familiar with R, JAGS and uses the rjags() package
 The code runs using R version 4.4.2.
 
 ## File Details
-
+The main file for this analysis is "compile_and_sample.R", it calls "land_change_analysis_v2.R" file. The output is saved as RMD files to the /Output/Results folder. These results are called by "create_figures_v2.R".
 
 ## Code Run Time
 The code in the file compile_and_sample.R can many hours to run and the some of the resulting files are over 100MB (too large to be included in the Repository). The other scripts take less than a minute to run.

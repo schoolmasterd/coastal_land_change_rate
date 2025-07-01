@@ -2,7 +2,7 @@
 #and three models to be fit to it, then compiles and samples the models.
 
 #load the data and models
-source("Code/land_change_analysis.R")
+source("Code/land_change_analysis_v2.R")
 #load packages
 library(rjags)
 
