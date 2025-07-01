@@ -35,4 +35,4 @@ The code runs using R version 4.4.2.
 
 
 ## Code Run Time
-The code in the file compile_and_sample.R can take over one hour to run. However, the results of running that code is in the Output folder. The other scripts take less than a minute to run. 
+The code in the file compile_and_sample.R can many hours to run and the some of the resulting files are over 100MB (too large to be included in the Repository). The other scripts take less than a minute to run. 

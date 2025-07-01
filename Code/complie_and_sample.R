@@ -16,11 +16,6 @@ mod_1<-
     n.adapt = 1000
   )
 update(mod_1, 5000)
-#sample the site-level
-  #mod1_samples_site<-coda.samples(mod_1, c("bs", "bi", "bh","bx"), n.iter = 20000,thin = 5)
-#sample predicted values
-  #mod1_samples_mu<-coda.samples(mod_1, "mu", n.iter = 20000,thin = 5)
-#sample dic
 mod1_dic <- dic.samples(model = mod_1, n.iter = 5000, type = "popt")
 
 ##model 2
@@ -32,26 +27,13 @@ mod_2<-
     n.adapt = 1000
   )
 update(mod_2, 5000)
-#sample the site-level
-  mod2_samples_site<-coda.samples(mod_2, c("bs", "bi", "bh","bx"), n.iter = 30000,thin = 5)
-  #saveRDS(mod2_samples_site,file="Output/Results/mod2_site_samples_beta.rds")
-#sample the site-level intercepts (alpha)
-  #mod2_samples_site_alpha<-coda.samples(mod_2, c("alpha"), n.iter = 30000,thin = 5)
-  #saveRDS(mod2_samples_site_alpha,file="Output/Results/mod2_site_samples_intercepts.rds")
-#sample at the coastwide scale
-  mod2_samples_coast<-coda.samples(mod_2, "b.coast", n.iter = 30000,thin = 5)
-  #saveRDS(mod2_samples_coast,file="Output/Results/mod2_coast_samples.rds")
-#sample predicted values
-  mod2_samples_mu<-coda.samples(mod_2, "mu", n.iter = 30000,thin = 5)
-  #saveRDS(mod2_samples_mu,file="Output/Results/mod2_prediction_samples.rds")
-
 #sample dic
 mod2_dic <- dic.samples(model = mod_2, n.iter = 5000, type = "popt")
 
 ##model 3
 mod_3<-
   jags.model(
-    textConnection(basin_coast_pool),
+    textConnection(province_coast_pool),
     data = dat_mod3,
     n.chains = 10,
     n.adapt = 1000
@@ -63,11 +45,10 @@ update(mod_3, 5000)
 #sample the site-level intercepts (alpha)
   mod3_samples_site_alpha<-coda.samples(mod_3, c("alpha"), n.iter = 30000,thin = 5)
   saveRDS(mod3_samples_site_alpha,file="Output/Results/mod3_site_samples_intercepts.rds")
-#sample at the basin scale
-  mod3_samples_basin<-coda.samples(mod_3, c("b.basin.h","b.basin.i","b.basin.s","b.basin.x"), n.iter = 30000,thin = 5)
-  saveRDS(mod3_samples_basin,file="Output/Results/mod3_prov_samples.rds")
-#sample at the coastwide scale
-  #mod3_samples_coast<-coda.samples(mod_3, "sigma.coast", n.iter = 1000,thin = 5)
+#sample at the prov scale
+  mod3_samples_prov<-coda.samples(mod_3, c("b.prov.h","b.prov.i","b.prov.s","b.prov.x"), n.iter = 30000,thin = 5)
+  saveRDS(mod3_samples_prov,file="Output/Results/mod3_prov_samples.rds")
+
 #sample predicted values
   mod3_samples_mu<-coda.samples(mod_3, "mu", n.iter = 30000,thin = 5)
   saveRDS(mod3_samples_mu,file="Output/Results/mod3_mu_samples.rds")

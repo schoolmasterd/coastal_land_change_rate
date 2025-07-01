@@ -3,7 +3,7 @@
 
 #load data
 df1 <- read.csv("Data/combined_data_for_analysis.csv")
-
+df1$site<-factor(df1$site)
 
 #set up one-hot coding for basin-level analysis
 bas <- matrix(0, nrow = dim(df1)[1], ncol = 9)
@@ -14,20 +14,14 @@ for (i in 1:dim(df1)[1])
 blu <- 1:9
 names(blu) <- unique(df1$basin)
 bas_by_site <- blu[df1$basin[!duplicated(df1$site)]]
-prov_by_site<- prov_lookup[df1$basin[!duplicated(df1$site)]]
-saveRDS(prov_by_site,"Output/Results/prov_by_site.RData")
-
-
-saveRDS(bas_by_site,file = "Output/Results/basin_by_site.rds")
+prov_by_site<-readRDS("Output/Results/prov_by_site.RData")
 site<-unique(df1$site)
-saveRDS(site,file = "Output/Results/site_list.rds")
 
 
 #Here we set up three (JAGS) models of different hierarchical structure for comparison
 #one will have not pooling, i.e., each site will be fit independently of all the others
 #in the second, we will have all the site-level estimates drawn from coastwide-level
-#distribution. Finally, we will draw site-level estimates from basin-scale distributions
-#and the basin scale parameters from a coastwide-scale distribution.
+#distribution. Finally, we will draw site-level estimates from province-scale distributions.
 #we will use DIC to compare the fits of the models
 #
 
@@ -83,8 +77,8 @@ coast_pool <- "model{
 
  }"
 
-#### model 3: site-basin-coastwide pooling ####
-basin_coast_pool <- "model{
+#### model 3: site-province pooling ####
+province_coast_pool <- "model{
     # likelihood
     for (i in 1:N){
             y[i] ~ dnorm(mu[i],tau.y)
@@ -92,53 +86,44 @@ basin_coast_pool <- "model{
             bh[site[i]]*X[i,3]+bx[site[i]]*X[i,1]*X[i,2]
     }
     # priors for site-level parameters
-    # site-level betas sampled from basin-level distribution
+    # site-level betas sampled from province-level distribution
     for(j in 1:nsite){
        alpha[j]~dnorm(0,.001)
-       bh[j] ~ dmnorm(b.basin.h[basin[j]],tau.basin[1])
-       bi[j] ~ dmnorm(b.basin.i[basin[j]],tau.basin[2])
-       bs[j] ~ dmnorm(b.basin.s[basin[j]],tau.basin[3])
-       bx[j] ~ dmnorm(b.basin.x[basin[j]],tau.basin[4])
+       bh[j] ~ dmnorm(b.prov.h[prov[j]],tau.prov[1])
+       bi[j] ~ dmnorm(b.prov.i[prov[j]],tau.prov[2])
+       bs[j] ~ dmnorm(b.prov.s[prov[j]],tau.prov[3])
+       bx[j] ~ dmnorm(b.prov.x[prov[j]],tau.prov[4])
      }
     #prior for precision of y
     tau_y~dgamma(.1,.1)
     
   #prior for site-level precision of betas
     for(i in 1:4){
-      sigma.basin[i]~dunif(0,100)
-      tau.basin[i]<-pow(sigma.basin[i],-2)
+      sigma.prov[i]~dunif(0,100)
+      tau.prov[i]<-pow(sigma.prov[i],-2)
     }
-  # basin-level betas sampled from a coastwide distribution
-    for(j in 1:Nbas){
-      #b.basin.h[j]~dnorm(b.coast[1],tau.coast[1])
-      #b.basin.i[j]~dnorm(b.coast[2],tau.coast[2])
-      #b.basin.s[j]~dnorm(b.coast[3],tau.coast[3])
-      #b.basin.x[j]~dnorm(b.coast[4],tau.coast[4])
-      b.basin.h[j]~dnorm(0,.001)
-      b.basin.i[j]~dnorm(0,.001)
-      b.basin.s[j]~dnorm(0,.001)
-      b.basin.x[j]~dnorm(0,.001)
+  # prov-level betas sampled from a coastwide distribution
+    for(j in 1:Nprov){
+      b.prov.h[j]~dnorm(0,.001)
+      b.prov.i[j]~dnorm(0,.001)
+      b.prov.s[j]~dnorm(0,.001)
+      b.prov.x[j]~dnorm(0,.001)
     }
-  #prior for coastwide betas
-   #for(j in 1:4){
-   #   b.coast[j]~dnorm(0,.001)
-   #   sigma.coast[j]~dunif(0,100)
-   #   tau.coast[j]<-pow(sigma.coast[j],-2)
-   #}
+  
    #prior for precision of y
     sigma.y~dunif(0,100)
     tau.y<-pow(sigma.y,-2)
     
     for(x in 1:lsim){
-    c.low[x]<-b.basin.s[1]*-1+b.basin.i[1]*sim[x]-1*sim[x]*b.basin.x[1]
-    c.high[x]<-b.basin.s[1]*1+b.basin.i[1]*sim[x]+1*sim[x]*b.basin.x[1]
-    d.low[x]<-b.basin.s[2]*-1+b.basin.i[2]*sim[x]-1*sim[x]*b.basin.x[2]
-    d.high[x]<-b.basin.s[2]*1+b.basin.i[2]*sim[x]+1*sim[x]*b.basin.x[2]
+    c.low[x]<-b.prov.s[1]*-1+b.prov.i[1]*sim[x]-1*sim[x]*b.prov.x[1]
+    c.high[x]<-b.prov.s[1]*1+b.prov.i[1]*sim[x]+1*sim[x]*b.prov.x[1]
+    d.low[x]<-b.prov.s[2]*-1+b.prov.i[2]*sim[x]-1*sim[x]*b.prov.x[2]
+    d.high[x]<-b.prov.s[2]*1+b.prov.i[2]*sim[x]+1*sim[x]*b.prov.x[2]
     
-    c.low2[x]<-b.basin.s[1]*sim[x]+b.basin.i[1]*(-1)-1*sim[x]*b.basin.x[1]
-    c.high2[x]<-b.basin.s[1]*sim[x]+b.basin.i[1]*(1)+1*sim[x]*b.basin.x[1]
-    d.low2[x]<-b.basin.s[2]*sim[x]+b.basin.i[2]*(-1)-1*sim[x]*b.basin.x[2]
-    d.high2[x]<-b.basin.s[2]*sim[x]+b.basin.i[2]*(1)+1*sim[x]*b.basin.x[2]
+    c.low2[x]<-b.prov.s[1]*sim[x]+b.prov.i[1]*(-1)-1*sim[x]*b.prov.x[1]
+    c.high2[x]<-b.prov.s[1]*sim[x]+b.prov.i[1]*(1)+1*sim[x]*b.prov.x[1]
+    d.low2[x]<-b.prov.s[2]*sim[x]+b.prov.i[2]*(-1)-1*sim[x]*b.prov.x[2]
+    d.high2[x]<-b.prov.s[2]*sim[x]+b.prov.i[2]*(1)+1*sim[x]*b.prov.x[2]
     }
 }"
 
@@ -162,7 +147,7 @@ dat_mod3 <- list(
   nsite = length(unique(df1$site)),
   site = df1$site,
   basin = as.numeric(factor(prov_by_site)),
-  Nbas = 2,
+  Nprov = 2,
   sim=seq(-1,1,by=.1),
   lsim=length(seq(-1,1,by=.1))
 )
