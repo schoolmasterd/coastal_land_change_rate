@@ -7,13 +7,13 @@
 #### Year of Origin:   2025 (original publication)
 #### Year of Version:  2025
 #### Digital Object Identifier (DOI):TBD
-#### USGS Information Product Data System (IPDS) no.: TBD
+#### USGS Information Product Data System (IPDS) no.: IP-180480
 
 ***
 
 _Suggested Citation:_
 
-
+This draft manuscript is distributed solely for purposes of scientific peer review. Its content is deliberative and predecisional, so it must not be disclosed or released by reviewers. Because the manuscript has not yet been approved for publication by the U.S. Geological Survey (USGS), it does not represent any official USGS finding or policy.
 
 _Authors' [ORCID](https://orcid.org) nos.:_ \
 DRS: 0000-0003-0910-4458\
@@ -35,4 +35,4 @@ The code runs using R version 4.4.2.
 
 
 ## Code Run Time
-The code in the file compile_and_sample.R can many hours to run and the some of the resulting files are over 100MB (too large to be included in the Repository). The other scripts take less than a minute to run. 
+The code in the file compile_and_sample.R can many hours to run and the some of the resulting files are over 100MB (too large to be included in the Repository). The other scripts take less than a minute to run.
