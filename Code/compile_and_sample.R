@@ -1,4 +1,4 @@
-#This file runs the code in the file "land_change_analysis.R" to load the data
+#This file runs the code in the file "land_change_analysis_v2.R" to load the data
 #and three models to be fit to it, then compiles and samples the models.
 
 #load the data and models

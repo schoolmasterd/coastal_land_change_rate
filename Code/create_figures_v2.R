@@ -1,5 +1,5 @@
 
-#This code is used to created figures from the samples of model 2
+#This code is used to created figures from the samples of model 3
 #load rjags library to read the saved coda-class posterior distributions
 library(rjags)
 

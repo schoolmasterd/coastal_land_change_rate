@@ -19,7 +19,7 @@ site<-unique(df1$site)
 
 
 #Here we set up three (JAGS) models of different hierarchical structure for comparison
-#one will have not pooling, i.e., each site will be fit independently of all the others
+#one will have no pooling, i.e., each site will be fit independently of all the others
 #in the second, we will have all the site-level estimates drawn from coastwide-level
 #distribution. Finally, we will draw site-level estimates from province-scale distributions.
 #we will use DIC to compare the fits of the models
