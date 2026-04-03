@@ -18,7 +18,6 @@ df1 <- read.csv("Data/combined_data_for_analysis.csv")
 
 mod3_preds<-readRDS("Output/Results/mod3_mu_samples.rds")
 #load coastal-level estimates
-#samps_b_coast<-readRDS("Output/Results/mod2_coast_samples.rds")
 
 #load site and basin names
 bas_by_site<-readRDS("Output/Results/basin_by_site.rds")
@@ -59,7 +58,7 @@ abline(h = 0, lty = 2)
 axis(
   side = 1,
   at = c(.9,1.9,2.9,3.9),
-  labels = c("Hurricane", "Storminess", "PTD", "Interaction")
+  labels = c("Tropical\nCyclone", "Storminess", "PTD", "Interaction")
 )
 legend("topright",legend = c("Chenier Plain","Delta Plain"),pch=21,
        pt.bg=c("#CCCCCC","#333333"),bty='n',horiz = F,cex=1.2)
@@ -70,11 +69,11 @@ ixn_plot<-readRDS("Output/Results/mod3_interaction_plot.rds")
 inx_sum<-summary(ixn_plot)
 
 pdf("Output/Fig_5.pdf",height = 10,width = 5)
-par(mfrow=c(2,1))
 
+par(mfrow=c(2,1),xpd=NA,mar=c(2.1, 4.1,3.1,2.1),oma=c(2,0,4,0))
 ptd_raw<-(0.4719979+seq(-1,1,by=.5)*0.3023007)
 plot(1:21,alpha_prov[1]+inx_sum$quantiles[grep("c.low",rownames(inx_sum$quantiles)),"50%"],type = "l",
-     bty="l",xaxt="n",ylab="Land Change Rate (ha/yr)",xlab="Percent Time Drained",main="Chenier Plain",ylim=c(-2,3.5))
+     bty="l",xaxt="n",ylab="Land Change Rate (ha/yr)",xlab="",main="Chenier Plain",ylim=c(-2,3.5))
 
 polygon(c(1:21,rev(1:21)),alpha_prov[1]+c(inx_sum$quantiles[grep("c.low2",rownames(inx_sum$quantiles)),"2.5%"],
                            rev(inx_sum$quantiles[grep("c.low2",rownames(inx_sum$quantiles)),"97.5%"])),
@@ -86,10 +85,12 @@ polygon(c(1:21,rev(1:21)),alpha_prov[1]+c(inx_sum$quantiles[grep("c.high2",rowna
                                           rev(inx_sum$quantiles[grep("c.high2",rownames(inx_sum$quantiles)),"97.5%"])),
         col=adjustcolor("lightblue",alpha.f=0.5),border = NA)
 lines(1:21,alpha_prov[1]+inx_sum$quantiles[grep("c.high2",rownames(inx_sum$quantiles)),"50%"],type = "l",lty=2,lwd=2)
+legend(-1,6.0,c("Calm (8.23 pa)","Stormy (149.44 pa)"),
+       title="Storminess",lty=c(1,2),bty="n",lwd=2,xpd = NA,horiz = T)
 #Delta
-mtext("(a)",side = 3,adj=0,padj=-1)
+mtext("(a)",side = 3,adj=-.1,padj=-1,font = 1)
 plot(1:21,alpha_prov[2]+inx_sum$quantiles[grep("d.low2",rownames(inx_sum$quantiles)),"50%"],type = "l",bty="l",xaxt="n",
-     ylab="",xlab="Percent Time Drained",main = "Delta Plain",ylim=c(-2,3.5))
+     ylab="Land Change Rate (ha/yr)",xlab="Percent Time Drained",main ="Delta Plain",ylim=c(-2,3.5))
 polygon(c(1:21,rev(1:21)),alpha_prov[2]+c(inx_sum$quantiles[grep("d.low2",rownames(inx_sum$quantiles)),"2.5%"],
                                           rev(inx_sum$quantiles[grep("d.low2",rownames(inx_sum$quantiles)),"97.5%"])),
         col = adjustcolor("lightgrey",alpha.f=0.5),border=NA)
@@ -100,8 +101,10 @@ polygon(c(1:21,rev(1:21)),alpha_prov[2]+c(inx_sum$quantiles[grep("d.high2",rowna
         col=adjustcolor("lightblue",alpha.f=0.5),border = NA)
 lines(1:21,alpha_prov[2]+inx_sum$quantiles[grep("d.high",rownames(inx_sum$quantiles)),"50%"],type = "l",lty=2,lwd=2)
 axis(side = 1,at = c(1,6,11,16,21),labels = round(ptd_raw,1))
-mtext("(b)",side = 3,adj=0,padj=-1)
-legend("topright",c("Calm (8.23 pa)","Stormy (149.44 pa)"),title="Storminess",lty=c(1,2),bty="n",lwd=2,xpd = T)
+#legend(-.5,6,c("Calm (8.23 pa)","Stormy (149.44 pa)"),
+ #      title="Storminess",lty=c(1,2),bty="n",lwd=2,xpd = T,horiz = T)
+mtext("(b)",side = 3,adj=-.1,padj=-1,font = 1)
+#mtext("Delta Plain",side = 3,adj=.5,padj=0,font = 2,cex = 1.25)
 dev.off()
 
 ####create plots site-level predictions for appendix####
@@ -159,7 +162,7 @@ s_who <- grep("bs", rownames(b_sum$quantiles))
 x_who <- grep("bx", rownames(b_sum$quantiles))
 
 par_group<-c("h_who","i_who","s_who","x_who")
-y_labs<-c("Hurricane Estimate","Storminess Estimate","Percent Time Drained Estimate","Interaction Estimate")
+y_labs<-c("Tropical Cyclone Estimate","Storminess Estimate","Percent Time Drained Estimate","Interaction Estimate")
 pretty_basin_names<-c("PO"="Pontchartrain","BS"="Breton Sound","MR"="Mississippi River Delta",
                       "BA"="Barataria","TE"="Terrebonne","AT"="Atchafalaya Delta",
                       "TV"="Teche-Vermilion","ME"="Mermentau","CS"="Calcasieu-Sabine")
@@ -281,3 +284,4 @@ for(i in 1:3){
   mtext("Site", side = 1, outer=T,padj = 1)
   dev.off()
 }
+
